@@ -9,6 +9,8 @@ import Rank from "../rank/rank";
 import PublicLeetcode from "../public_leetcode/publicLeetcode";
 import SingleLeetcode from "../single_leetcode/singleLeetcode";
 import AddNewLeetcode from "../LeetcodeProblem/addNewLeetcode";
+import SingleJob from "../single_job/singleJob";
+import PublicJob from "../public_job/publicJob";
 
 function Home() {
 
@@ -27,6 +29,8 @@ function Home() {
                             <Route path="/rank" element={<Rank />} />
                             <Route path="/leetcodes" element={<PublicLeetcode />} />
                             <Route path="/users/:uid/leetcodes/:lid" element={<SingleLeetcode />} />
+                            <Route path="/jobs" element={<PublicJob/>} />
+                            <Route path="/users/:uid/jobs/:jid" element={<SingleJob/>}/>
                             <Route path="/leetcodes/new" element={<AddNewLeetcode />} />
                         </Routes>
                     </div>

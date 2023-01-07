@@ -14,7 +14,8 @@ function Navigation() {
     { label: 'BQ', icon: 'fa-bookmark', path: '/bookmarks' },
     { label: 'My BQ', icon: 'fa-list', path: '/lists' },
     { label: 'Concept', icon: 'fa-user', path: '/profile' },
-    { label: 'Job List', icon: 'fa-user', path: '/movies' },
+    { label: 'Job List', icon: 'fa-user', path: '/jobs' },
+    { label: 'My Job', icon: 'fa-list-check', path: '/users/:uid/jobs'},
     { label: 'Login', icon: 'fa-user', path: '/login' },
   ];
   return (
