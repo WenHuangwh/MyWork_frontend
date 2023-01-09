@@ -3,7 +3,7 @@
         "leetcode_id": "1",
         "name": "Two sum",
         "intro": "找出Array里两个数相加为targe的index,返回一个int[].",
-        "tags": ["Two Pointer"],
+        "tags": ["Two Pointers"],
         "ratings": {
             "Jiao": 5,
             "Jack": 4,
@@ -41,7 +41,7 @@
         "leetcode_id": "57",
         "name": "Insert interval",
         "intro": "不重要.",
-        "tags": ["Array"],
+        "tags": ["Sort"],
         "ratings": {
             "Jiao": 5,
             "Jack": 5,

@@ -38,14 +38,14 @@ function App() {
                         <Logout setUser={setUser} />
                     ) : (
                         <Login setUser={setUser} />
+
                     )}
                 </Navbar>
             </div>
+
             <div>
-                < Home />
+                < Home user={user} />
             </div>
-
-
         </GoogleOAuthProvider>
 
     );

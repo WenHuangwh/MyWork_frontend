@@ -9,25 +9,27 @@ import Rank from "../rank/rank";
 import PublicLeetcode from "../public_leetcode/publicLeetcode";
 import SingleLeetcode from "../single_leetcode/singleLeetcode";
 import AddNewLeetcode from "../LeetcodeProblem/addNewLeetcode";
+import AddSolution from "../LeetcodeProblem/addSolution";
+import { useState, useEffect } from "react";
 
-function Home() {
 
+function Home({ user }) {
     return (
-        // <Container className="container" fluid='xl'>
-        <HashRouter>
+        user && <HashRouter>
             <Row>
                 <Col xs={2}>
                     <div className="left-column">
-                        <Navigation />
+                        <Navigation uid={user.googleId} />
                     </div>
                 </Col>
                 <Col>
                     <div className="center-column">
                         <Routes>
                             <Route path="/rank" element={<Rank />} />
-                            <Route path="/leetcodes" element={<PublicLeetcode />} />
-                            <Route path="/users/:uid/leetcodes/:lid" element={<SingleLeetcode />} />
-                            <Route path="/leetcodes/new" element={<AddNewLeetcode />} />
+                            <Route path="/leetcodes/" element={<PublicLeetcode user={user} />} />
+                            <Route path="/leetcodes/:lid" element={<SingleLeetcode user={user} />} />
+                            <Route path="/leetcodes/addproblem" element={<AddNewLeetcode />} />
+                            <Route path="/leetcodes/:lid/addsolution" element={<AddSolution user={user} />} />
                         </Routes>
                     </div>
                 </Col>
@@ -38,8 +40,6 @@ function Home() {
                 </Col>
             </Row>
         </HashRouter>
-        // </Container >
-
     );
 }
 export default Home; 

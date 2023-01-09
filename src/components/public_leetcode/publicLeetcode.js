@@ -1,7 +1,5 @@
 import React from "react";
 import Select from 'react-select';
-import problems from "./problems.json";
-import solutions from "./solution.json";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
@@ -9,25 +7,30 @@ import Form from 'react-bootstrap/Form';
 import { useState, useEffect } from "react";
 import { LEETCODE_TAGS } from "../../context.js";
 import Table from 'react-bootstrap/Table';
+import { Link, useParams } from "react-router-dom";
+import Button from 'react-bootstrap/Button';
+import Nav from 'react-bootstrap/Nav';
+import "./styles.css";
+import * as leetcodeService from "../../services/leetcodes-service";
 
-function PublicLeetcode() {
+function PublicLeetcode({ user }) {
+
     const leetcode_tags = LEETCODE_TAGS;
-    let tag = "All";
-    const [leetcodes, setLeetcodes] = useState([]);
+    let tag;
+    const [allProblems, setAll] = useState([]);
+    const [leetcodes, setLeetcodes] = useState(allProblems);
+    let sort = null;
 
-    let averageValue = (obj) => {
-        let totalValue = 0;
-        let totalUser = 0;
-        for (let property in obj) {
-            totalValue += obj[property];
-            totalUser++;
-        }
-        return totalValue / totalUser;
-    }
+    useEffect(() => {
+        leetcodeService.findAllLeetcodes()
+            .then(all => setLeetcodes(all))
+        leetcodeService.findAllLeetcodes()
+            .then(all => setAll(all))
+    }, [])
 
-    const refreshLeetcodes = () => {
-        const allLeetcodes = problems;
-        if (tag === 'All' || 'Select one tag' || null || "") {
+    const refreshByTag = () => {
+        const allLeetcodes = allProblems;
+        if (tag === 'All' || tag === "-") {
             setLeetcodes(allLeetcodes);
         } else {
             const tagLeetcodes = [];
@@ -42,8 +45,18 @@ function PublicLeetcode() {
         }
     };
 
+    // const sortProblems = () => {
+    //     if (sort) { 
+    //         const allLeetcodes = problems;
+    //         if (sort === "Ratings") { 
+
+    //         }
+    //     }
+    // }
+
+
     const selectLeetcode = (leetcode_id) => {
-        const allLeetcodes = problems;
+        const allLeetcodes = allProblems;
         const tagLeetcodes = [];
         for (let problem of allLeetcodes) {
             if (problem.leetcode_id === leetcode_id) {
@@ -65,12 +78,25 @@ function PublicLeetcode() {
                                 as="select"
                                 onChange={e => {
                                     tag = e.target.value;
-                                    refreshLeetcodes();
+                                    refreshByTag();
                                 }}
                             >
                                 {leetcode_tags.map(option => {
                                     return <option value={option}>{option}</option>
                                 })}
+                            </Form.Control>
+                        </Form.Group>
+                        <Form.Group controlId="formBasicSelect" as={Col}>
+                            <Form.Label>Sort Problems</Form.Label>
+                            <Form.Control
+                                as="select"
+                                onChange={e => {
+                                    sort = e.target.value;
+                                }}
+                            >
+                                <option value="ID">题号</option>
+                                <option value="Ratings">Ratings</option>
+                                <option value="Repeat">Repeat</option>
                             </Form.Control>
                         </Form.Group>
                         <Form.Group controlId="formBasicSelect" as={Col}>
@@ -84,6 +110,14 @@ function PublicLeetcode() {
                             >
                             </Form.Control>
                         </Form.Group>
+                        <Form.Group as={Col}>
+                            <a href="#/leetcodes/addproblem">
+                                <Button className="button" type="button" class="btn">
+                                    New/Edit
+                                </Button>
+                            </a>
+                        </Form.Group>
+
                     </Row>
                 </Form>
 
@@ -104,11 +138,16 @@ function PublicLeetcode() {
                             leetcodes.map(problem => {
                                 return (
                                     <tr>
-                                        <td>{problem.leetcode_id}</td>
+
+                                        <td>
+                                            <Nav.Item>
+                                                <Nav.Link href={"#/leetcodes/" + problem.leetcode_id}>{problem.leetcode_id}</Nav.Link>
+                                            </Nav.Item>
+                                        </td>
                                         <td>{problem.name}</td>
                                         <td>{problem.intro}</td>
-                                        <td>{averageValue(problem.ratings)}</td>
-                                        <td>{averageValue(problem.failure)}</td>
+                                        {/* <td>{averageValue(problem.ratings)}</td>
+                                        <td>{averageValue(problem.failure)}</td> */}
                                     </tr>
                                 );
                             })
@@ -116,7 +155,7 @@ function PublicLeetcode() {
                     </tbody>
                 </Table>
             </div>
-        </Container>
+        </Container >
     )
 }
 

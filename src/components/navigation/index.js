@@ -2,12 +2,12 @@ import React from "react";
 import "./navigation.css";
 import { useLocation, Link } from "react-router-dom";
 
-function Navigation() {
+function Navigation({ uid }) {
   const { pathname } = useLocation();
   // console.log(location.pathname);
   const links = [
     { label: 'Rank', icon: 'fa-square-t', path: '/rank' },
-    { label: 'Leetcode', icon: 'fa-home', path: '/leetcodes' },
+    { label: 'Leetcode', icon: 'fa-home', path: `/leetcodes` },
     { label: 'My Leetcode', icon: 'fa-hashtag', path: '/explore' },
     { label: 'OA', icon: 'fa-bell', path: '/notifications' },
     { label: 'My OA', icon: 'fa-envelope', path: '/messages' },
