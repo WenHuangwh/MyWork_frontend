@@ -14,21 +14,12 @@ function Login({ setUser }) {
             ...tokenData
         }
         // const valid_ids = process.env.REACT_APP_VALID_IDS.split(",");
-        const valid_ids = IDS;
         // console.log(process.env.REACT_APP_VALID_IDS);
         // console.log(process.env.REACT_APP_BASE_URL);
         // console.log(loginData.googleId);
-        for (const id of valid_ids) {
-            console.log(id);
-            if (id === loginData.googleId) {
-                setUser(loginData);
-                localStorage.setItem("login", JSON.stringify(loginData));
-                console.log('Login Success:', loginData);
-                return;
-            }
-        }
-        console.log('Login failed: res');
-        console.log(loginData);
+        setUser(loginData);
+        localStorage.setItem("login", JSON.stringify(loginData));
+        console.log('Login Success:', loginData);
     };
 
     const onFailure = (res) => {
