@@ -6,7 +6,7 @@ function Navigation({ uid }) {
   const { pathname } = useLocation();
   // console.log(location.pathname);
   const links = [
-    { label: 'Rank', icon: 'fa-circle-up', path: '/rank' },
+    { label: 'Job', icon: 'fa-sharp fa-solid fa-phone', path: '/jobs' },
 
     { label: 'Leetcode', icon: 'fa-sharp fa-solid fa-chalkboard', path: `/leetcodes` },
     { label: 'My Leetcode', icon: 'fa-sharp fa-solid fa-bell', path: '/myleetcodes' },
@@ -14,7 +14,7 @@ function Navigation({ uid }) {
     { label: 'My OA', icon: 'fa-book', path: '/myoa' },
     { label: 'BQ', icon: 'fa-bookmark', path: '/bqs' },
     { label: 'My BQ', icon: 'fa-atom-simple', path: '/mybq' },
-    { label: 'Job', icon: 'fa-sharp fa-solid fa-phone', path: '/jobs' },
+
     // { label: 'Concept', icon: 'fa-atom-simple', path: '/profile' },
   ];
   return (

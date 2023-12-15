@@ -1,201 +1,131 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import Form from 'react-bootstrap/Form';
-import { useState, useEffect } from "react";
-import { LEETCODE_TAGS } from "../../context.js";
 import Table from 'react-bootstrap/Table';
-import { Link, useParams } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
 import Nav from 'react-bootstrap/Nav';
+import { Link } from "react-router-dom";
 import "./styles.css";
 import * as jobsService from "../../services/jobs-service";
-import { JOBS_TERMS, JOBS_TYPES } from "../../context.js";
+import Spinner from 'react-bootstrap/Spinner';
 
 function Jobs({ user }) {
-
     const [allJobs, setAll] = useState([]);
     const [displayJobs, setDisplay] = useState([]);
     const [myJobs, setMyJobs] = useState([]);
-    const [term, setTerm] = useState("All");
-    const [jobType, setType] = useState("All");
+    const [searchInput, setSearchInput] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        const selected = [];
-        for (let each of allJobs) {
-            if (term === "All" || term === each.term) {
-                if (each.jobType === jobType || jobType === "All") {
-                    selected.push(each);
-                }
-            }
-        }
-        setDisplay(selected);
-    }, [term, jobType])
+        const filteredJobs = allJobs.filter(job =>
+            job.company.toLowerCase().includes(searchInput.toLowerCase())
+        );
+        setDisplay(filteredJobs);
+    }, [searchInput, allJobs]);
 
     useEffect(() => {
+        setIsLoading(true);
         jobsService.findAllJobs()
             .then(all => {
                 all.sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
-                setDisplay(all);
                 setAll(all);
+                setIsLoading(false);
             });
 
         jobsService.findMyJobsById(user.googleId)
             .then(myJobs => {
-                if (myJobs[0] && myJobs[0].uid) {
-                    const myList = myJobs[0].list;
-                    setMyJobs(myList);
+                if (myJobs[0]?.uid) {
+                    setMyJobs(myJobs[0].list);
                 } else {
-                    const newMyJobs = {};
-                    newMyJobs.uid = user.googleId;
-                    newMyJobs.list = [];
+                    const newMyJobs = { uid: user.googleId, list: [] };
                     jobsService.createMyJobs(user.googleId, newMyJobs)
                         .then(data => setMyJobs(data.list));
                 }
             });
-    }, [])
+    }, [user.googleId]);
 
     const toggleApply = (jid) => {
-        let newList;
-        if (myJobs.includes(jid)) {
+        const newList = myJobs.includes(jid)
+            ? myJobs.filter(my => my !== jid)
+            : [...myJobs, jid];
 
-            newList = myJobs.filter(my => my !== jid)
-            setMyJobs(newList);
-
-        } else {
-            newList = [...myJobs, jid]
-            setMyJobs(newList);
-        }
-
-        const newMyJob = {};
-        newMyJob.uid = user.googleId;
-        newMyJob.list = newList;
+        setMyJobs(newList);
+        const newMyJob = { uid: user.googleId, list: newList };
         jobsService.updateMyJobs(newMyJob.uid, newMyJob);
-    }
+    };
 
-    return (<
-        Container fluid >
-        <
-        div className="bg-white bg-opacity-10 ttr-rounded-15px mt-2 p-2" >
-            <
-        Form >
-                <
-        Row >
-                    <
-        Form.Group controlId="formBasicSelect"
-                        as={Col} >
-                        <
-        Form.Label > Select Term < /Form.Label> <
-        Form.Control as="select"
-                                onChange={
-                                    e => {
-                                        setTerm(e.target.value);
-                                    }
-                                } >
-                                {
-                                    JOBS_TERMS.map(option => {
-                                        return <option value={option} > {option} < /option>
-            })
-        } <
-        /Form.Control> <
-        /Form.Group> <
-        Form.Group controlId="formBasicSelect"
-                                                as={Col} >
-                                                <
-        Form.Label > Select Type < /Form.Label> <
-        Form.Control as="select"
-                                                        onChange={
-                                                            e => {
-                                                                setType(e.target.value);
-                                                            }
-                                                        } >
-                                                        {
-                                                            JOBS_TYPES.map(option => {
-                                                                return <option value={option} > {option} < /option>
-            })
-        } <
-        /Form.Control> <
-        /Form.Group> <
-        Form.Group as={Col} >
-                                                                        <
-        a href="#/jobs/new" >
-                                                                            <
-        Button className="button"
-                                                                                type="button"
-                                                                                class="btn" >
-                                                                                New <
-        /Button> <
-        /a> <
-        /Form.Group> <
-        /Row> <
-        /Form>
+    return (
+        <Container fluid>
+            <div className="bg-white bg-opacity-10 ttr-rounded-15px mt-2 p-2">
+                <Form>
+                    <Row>
+                        <Col md={4}>
+                            <Form.Group>
+                                <Form.Label>Search by Company Name</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Enter company name"
+                                    value={searchInput}
+                                    onChange={e => setSearchInput(e.target.value)}
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Form.Group as={Col}>
+                            <Link to="/jobs/new">
+                                <Button className="button" type="button" class="btn">New</Button>
+                            </Link>
+                        </Form.Group>
+                    </Row>
+                </Form>
 
-                                                                                <
-        p > < /p>
+                {isLoading ? (
+                    <div>
+                        <Spinner animation="border" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </Spinner>
+                    </div>
+                ) : (
+                    <Table striped bordered hover>
+                        <thead>
+                            <tr>
+                                <th>公司</th>
+                                <th>备注</th>
+                                <th>已投</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {displayJobs.map(job => (
+                                <tr key={job._id}>
+                                    <td>
+                                        <Nav.Item>
+                                            <Nav.Link href={job.link} target="_blank">{job.company}</Nav.Link>
+                                        </Nav.Item>
+                                    </td>
+                                    <td>{job.comment}</td>
+                                    <td>
+                                        <div className="icons">
+                                            <span onClick={() => toggleApply(job._id)}>
+                                                {myJobs.includes(job._id)
+                                                    ? <i className="fa-sharp fa-solid fa-file-check fa-2x" style={{ color: 'red' }}></i>
+                                                    : <i className="fa-sharp fa-light fa-file-check fa-2x"></i>
+                                                }
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <Nav.Link href={`#/jobs/edit/${job._id}`}>编辑</Nav.Link>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </Table>
+                )}
 
-                                                                                    <
-        Table striped bordered hover >
-                                                                                        <
-        thead >
-                                                                                            <
-        tr >
-                                                                                                <
-        th > 公司 < /th> <
-        th > Term < /th> <
-        th > Type < /th> <
-        th > 备注 < /th> <
-        th > 推荐 < /th> <
-        th > 上传 < /th> <
-        th > 已投 < /th> <
-        /tr> <
-        /thead> <
-        tbody > {
-                                                                                                                                    displayJobs.map(job => {
-                                                                                                                                        return (<
-                    tr >
-                                                                                                                                            <
-                    td >
-                                                                                                                                                <
-                    Nav.Item >
-                                                                                                                                                    <
-                    Nav.Link href={job.link}
-                                                                                                                                                        target="_blank" > {job.company} < /Nav.Link> <
-                    /Nav.Item> <
-                    /td> <
-                    td > {job.term} < /td> <
-                    td > {job.jobType} < /td> <
-                    td > {job.comment} < /td> <
-                    td > {job.recommendation} < /td> <
-                    td > {job.author} < /td> <
-                    td >
-                                                                                                                                                                                <
-                    div className="icons" >
-                                                                                                                                                                                    <
-                    span onClick={
-                                                                                                                                                                                            () => toggleApply(job._id)} > {
-                                                                                                                                                                                            myJobs.includes(job._id) ?
-                                                                                                                                                                                                <
-                        i className="fa-sharp fa-solid fa-file-check fa-2x"
-                                                                                                                                                                                                    style={
-                                                                                                                                                                                                        { color: 'red' }} > < /i> :
-                                                                                                                                                                                                    <
-                            i className="fa-sharp fa-light fa-file-check fa-2x" > < /i>
-                    } <
-                    /span> <
-                    /div> <
-                    /td> <
-                                                                                                                                                                                                            td > < Nav.Link href={`#/jobs/edit/${job._id}`} > 编辑 < /Nav.Link></td >
-                                                                                                                                                                                                        <
-                    /tr>
-                                                                                                                                                                                                        );
-            })
-        } <
-        /tbody> <
-        /Table> <
-        /div> <
-        /Container >
-                                                                                                                                                                                                        )
+            </div>
+        </Container>
+    );
 }
 
-                                                                                                                                                                                                        export default Jobs;
+export default Jobs;
