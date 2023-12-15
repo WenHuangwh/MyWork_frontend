@@ -38,6 +38,7 @@ function Home({ user }) {
                     <Col>
                         <div className="center-column">
                             <Routes>
+                                <Route path="/" element={<Jobs user={user} />} />
                                 <Route path="/rank" element={<Rank />} />
                                 <Route path="/leetcodes/" element={<PublicLeetcode user={user} />} />
                                 <Route path="/myleetcodes" element={<MyLeetcode user={user} />} />
