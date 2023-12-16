@@ -96,7 +96,7 @@ function MyLeetcode({ user }) {
     const selectLeetcode = (idOrKeyWord) => {
         const tagLeetcodes = [];
         for (let problem of allLeetcodes) {
-            if (problem.leetcode_id === idOrKeyWord) {
+            if (problem.leetcode_id.toString().includes(idOrKeyWord)) {
                 tagLeetcodes.push(problem);
             }
             if (problem.name.toLowerCase().includes(idOrKeyWord.toLowerCase())) {
@@ -147,8 +147,8 @@ function MyLeetcode({ user }) {
                             <Form.Control
                                 type="text"
                                 onChange={e => {
+                                    setTag('All');
                                     selectLeetcode(e.target.value);
-                                    tag = "All";
                                 }}
                             >
                             </Form.Control>
