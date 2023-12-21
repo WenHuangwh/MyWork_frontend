@@ -177,13 +177,17 @@ function PublicLeetcode({ user }) {
                             selectedLeetcodes.map(problem => {
                                 return (
                                     <tr>
-                                        <td>
+                                        <td style={{ display: 'flex', alignItems: 'center' }}>
+                                            <div style={{ minWidth: '40px' }}>{problem.leetcode_id}</div>
+                                            <Nav.Item style={{ marginRight: '10px' }}>
+                                                <Nav.Link href={problem.link} target="_blank">原题</Nav.Link>
+                                            </Nav.Item>
                                             <Nav.Item>
-                                                <Nav.Link href={"#/leetcodes/" + problem.leetcode_id}>{problem.leetcode_id}</Nav.Link>
+                                                <Nav.Link href={"#/leetcodes/" + problem.leetcode_id} target="_blank">解析</Nav.Link>
                                             </Nav.Item>
                                         </td>
                                         <td>{problem.name}</td>
-                                        <td>{problem.intro}</td>
+                                        <td style={{ fontSize: '10px' }}>{problem.intro}</td>
                                         <td>{problem.importance.toFixed(2)}</td>
                                         <td>{problem.repeat.toFixed(2)}</td>
                                     </tr>
