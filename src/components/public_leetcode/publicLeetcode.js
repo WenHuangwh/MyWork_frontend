@@ -168,6 +168,7 @@ function PublicLeetcode({ user }) {
                             <th>题号</th>
                             <th>题目</th>
                             <th>简介</th>
+                            <th>Tags</th>
                             <th>重要</th>
                             <th>多刷</th>
                         </tr>
@@ -188,6 +189,13 @@ function PublicLeetcode({ user }) {
                                         </td>
                                         <td>{problem.name}</td>
                                         <td style={{ fontSize: '10px' }}>{problem.intro}</td>
+                                        <td style={{ fontSize: '10px' }}>
+                                            {problem.tags.map((tag, index) => (
+                                                <span key={index}>
+                                                    {tag}{index < problem.tags.length - 1 ? ', ' : ''}
+                                                </span>
+                                            ))}
+                                        </td>
                                         <td>{problem.importance.toFixed(2)}</td>
                                         <td>{problem.repeat.toFixed(2)}</td>
                                     </tr>
